@@ -24,9 +24,20 @@ builder.Services.AddScoped<IProductService, P05Shop.API.Services.ProductService.
 // addTransinet obiekt jest tworzony za kazdym razem kiedy odwolujmey sie do konstuktora 
 // nawet wielokrotnie w cyklu jedengo zaptrania 
 
- //addsingleton - nowa instancja klasy tworzona jest tylko 1 na caly cykl trwania naszej aplikacji 
+//addsingleton - nowa instancja klasy tworzona jest tylko 1 na caly cykl trwania naszej aplikacji 
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyCorsePolicy", builder =>
+    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+});
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("MyCorsePolicy", builder =>
+//    builder.AllowAnyHeader().AllowAnyHeader().WithOrigins("https://mySite.pl"));
+//});
 
 
 var app = builder.Build();
@@ -39,6 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("MyCorsePolicy");
 
 app.UseAuthorization();
 
