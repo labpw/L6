@@ -62,21 +62,42 @@ namespace P06Shop.Shared.Services.ProductService
         // alternatywny sposób pobierania danych 
         public async Task<ServiceResponse<List<Product>>> GetProductsAsync()
         {
-            var response = await _httpClient.GetAsync(_appSettings.BaseProductEndpoint.GetAllProductsEndpoint);
-            if (!response.IsSuccessStatusCode)
+            try
+            {
+                var response = await _httpClient.GetAsync(_appSettings.BaseProductEndpoint.GetAllProductsEndpoint);
+                if (!response.IsSuccessStatusCode)
+                    return new ServiceResponse<List<Product>>
+                    {
+                        Success = false,
+                        Message = "HTTP request failed"
+                    };
+
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ServiceResponse<List<Product>>>(json)
+                    ?? new ServiceResponse<List<Product>> { Success = false, Message = "Deserialization failed" };
+
+                result.Success = result.Success && result.Data != null;
+
+                return result;
+            }
+            catch (JsonException)
+            {
                 return new ServiceResponse<List<Product>>
                 {
                     Success = false,
-                    Message = "HTTP request failed"
+                    Message = "Cannot deserialize data"
                 };
+            }
+            catch (Exception)
+            {
+                return new ServiceResponse<List<Product>>
+                {
+                    Success = false,
+                    Message = "Network error"
+                };
+            }
 
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<ServiceResponse<List<Product>>>(json)
-                ?? new ServiceResponse<List<Product>> { Success = false, Message = "Deserialization failed" };
 
-            result.Success = result.Success && result.Data != null;
-
-            return result;
         }
 
         public async Task<ServiceResponse<Product>> GetProductByIdAsync(int id)
