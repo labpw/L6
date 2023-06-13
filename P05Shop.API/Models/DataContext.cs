@@ -13,10 +13,15 @@ namespace P05Shop.API.Models
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories{ get; set; }
+        public DbSet<Supplier> Suppliers{ get; set; }
+        public DbSet<ProductSuppliers> ProductSuppliers{ get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // fluent api 
+            // product 
             modelBuilder.Entity<Product>()
                 .Property(p => p.Barcode)
                 .IsRequired()
@@ -30,6 +35,30 @@ namespace P05Shop.API.Models
             modelBuilder.Entity<Product>()
              .Property(p => p.Price)
              .HasColumnType("decimal(8,2)");
+
+            modelBuilder.Entity<Product>()
+                 .HasOne(p => p.Category)
+                 .WithMany(c => c.Products);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.ProductSuppliers)
+                .WithOne(ps => ps.Product)
+                .HasForeignKey(ps => ps.ProductId);
+
+            // category 
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Products)
+                .WithOne(p => p.Category);
+
+            // supplier 
+            modelBuilder.Entity<Supplier>()
+                .HasMany(s => s.ProductSuppliers)
+                .WithOne(ps => ps.Supplier)
+                .HasForeignKey(ps => ps.SupplierId);
+
+            // productsupplier
+            modelBuilder.Entity<ProductSuppliers>()
+                .HasKey(ps => new { ps.ProductId, ps.SupplierId });
 
             // data seed 
 

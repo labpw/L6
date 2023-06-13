@@ -169,6 +169,8 @@ namespace P06Shop.Shared.Services.ProductService
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
+
                 return new ServiceResponse<List<Product>>
                 {
                     Success = false,

@@ -24,12 +24,12 @@ namespace P06Shop.Shared.Shop
 
     // fluent api 
     public class Product : INotifyPropertyChanged
-    {       
+    {
         public int Id { get; set; }
 
         public string Title { get; set; }
 
-  
+
         public string Barcode { get; set; }
 
         public double Price { get; set; }
@@ -62,5 +62,12 @@ namespace P06Shop.Shared.Shop
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public Category Category { get; set; }
+        public int CategoryId { get; set; }
+
+        public ProductDetails ProductDetails { get; set;}
+
+        public ICollection<ProductSuppliers> ProductSuppliers { get; set; }
     }
 }
