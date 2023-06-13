@@ -43,8 +43,11 @@ else
                 </tr>
             }
         </tbody>
-
     </table>
+
+    <button class="btn btn-primary" disabled="@(currentPage==1)" @onclick="PreviousPage">Previous</button>
+    <span>@currentPage</span>
+    <button class="btn btn-primary" @onclick="NextPage">Next</button>
 }
 
 
@@ -53,12 +56,23 @@ else
     private List<Product> products;
     private string message = "Loading products...";
 
+    private int currentPage = 1;
+    private const int pageSize = 10;
+
     protected override async Task OnInitializedAsync()
+    {
+        await  LoadProducts();
+    }
+
+    private async Task LoadProducts()
     {
         var response = await ProductService.GetProductsAsync();
         if (response.Success)
         {
-            products = response.Data;
+            products = response.Data
+            .Skip(pageSize * (currentPage - 1))
+            .Take(pageSize)
+            .ToList();
         }
         else
         {
@@ -66,9 +80,23 @@ else
         }
     }
 
+   
     void GoToEdit(int id)
     {
         NavigationManager.NavigateTo($"/products/editproduct/{id}");
     }
 
+    private async Task PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadProducts();
+        }
+    }
+    private async Task NextPage()
+    {
+        currentPage++;
+        await LoadProducts();
+    }
 }
