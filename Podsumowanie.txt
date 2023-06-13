@@ -10,3 +10,4 @@
  4) stworzylismy operacje CRUD - korzystajace z serwisow 
  5) wyniesienie czesci formularza produktu od osobnego komponentu
  6) Dodanie stronicowania po stronie klienta
+ 7) dodalismy stronicowanie i filtorwanie po stronie servera 

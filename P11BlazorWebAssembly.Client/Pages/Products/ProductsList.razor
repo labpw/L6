@@ -17,6 +17,13 @@
 
 else
 {
+    <div>
+        <InputText @bind-Value=searchTerm></InputText>
+        <button class="btn btn-primary" @onclick=Search>Search</button>
+    </div>
+    
+
+
     <table class="table">
         <thead>
             <tr>
@@ -59,6 +66,8 @@ else
     private int currentPage = 1;
     private const int pageSize = 10;
 
+    private string searchTerm = "";
+
     protected override async Task OnInitializedAsync()
     {
         await  LoadProducts();
@@ -66,13 +75,13 @@ else
 
     private async Task LoadProducts()
     {
-        var response = await ProductService.GetProductsAsync();
+        var response = await ProductService.SearchProductsAsync(searchTerm, currentPage, pageSize);
         if (response.Success)
         {
-            products = response.Data
-            .Skip(pageSize * (currentPage - 1))
-            .Take(pageSize)
-            .ToList();
+            products = response.Data;
+            //.Skip(pageSize * (currentPage - 1))
+            //.Take(pageSize)
+            //.ToList();
         }
         else
         {
@@ -80,7 +89,7 @@ else
         }
     }
 
-   
+
     void GoToEdit(int id)
     {
         NavigationManager.NavigateTo($"/products/editproduct/{id}");
@@ -97,6 +106,12 @@ else
     private async Task NextPage()
     {
         currentPage++;
+        await LoadProducts();
+    }
+
+    private async Task Search()
+    {
+        currentPage = 1;
         await LoadProducts();
     }
 }

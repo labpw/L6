@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using P06Shop.Shared;
 using P06Shop.Shared.Services.ProductService;
 using P06Shop.Shared.Shop;
@@ -29,6 +30,20 @@ namespace P05Shop.API.Controllers
                 return Ok(result);
             else
                 return  StatusCode(500, $"Internal server error {result.Message}");
+        }
+
+        [HttpGet("search/{text}/{page}/{pageSize}")]
+        [HttpGet("search/{page}/{pageSize}")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> SearchProducts(string? text=null, int page=1, int pageSize=10)
+        {
+            _logger.Log(LogLevel.Information, "Invoked GetProducts Method in controller");
+
+            var result = await _productService.SearchProductsAsync(text,page,pageSize);
+
+            if (result.Success)
+                return Ok(result);
+            else
+                return StatusCode(500, $"Internal server error {result.Message}");
         }
 
 

@@ -136,5 +136,45 @@ namespace P06Shop.Shared.Services.ProductService
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
             return result;
         }
+
+        public async Task<ServiceResponse<List<Product>>> SearchProductsAsync(string text, int page, int pageSize)
+        {
+
+            try
+            {
+                string searchUrl = string.IsNullOrWhiteSpace(text) ? "" : $"/{text}";
+                var response = await _httpClient.GetAsync(_appSettings.BaseProductEndpoint.SearchProductsEndpoint + searchUrl + $"/{page}/{pageSize}");
+                if (!response.IsSuccessStatusCode)
+                    return new ServiceResponse<List<Product>>
+                    {
+                        Success = false,
+                        Message = "HTTP request failed"
+                    };
+
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ServiceResponse<List<Product>>>(json)
+                    ?? new ServiceResponse<List<Product>> { Success = false, Message = "Deserialization failed" };
+
+                result.Success = result.Success && result.Data != null;
+
+                return result;
+            }
+            catch (JsonException)
+            {
+                return new ServiceResponse<List<Product>>
+                {
+                    Success = false,
+                    Message = "Cannot deserialize data"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResponse<List<Product>>
+                {
+                    Success = false,
+                    Message = "Network error"
+                };
+            }
+        }
     }
 }

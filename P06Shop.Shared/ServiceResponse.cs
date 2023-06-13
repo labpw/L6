@@ -14,6 +14,6 @@ namespace P06Shop.Shared
 
         public string Message { get; set; } = "Cannot invoke operation";
     
-
+        
     }
 }

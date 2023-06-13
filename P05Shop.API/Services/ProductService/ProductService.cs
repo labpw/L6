@@ -102,6 +102,40 @@ namespace P05Shop.API.Services.ProductService
            
         }
 
+        public async Task<ServiceResponse<List<Product>>> SearchProductsAsync(string text, int page, int pageSize)
+        {
+            IQueryable<Product> query = _dataContext.Products;
+
+            if (!string.IsNullOrEmpty(text))
+                query = query.Where(x => x.Title.Contains(text) || x.Description.Contains(text));
+
+            var products = await query
+                .Skip(pageSize * (page - 1))
+                .Take(pageSize)
+                .ToListAsync();
+
+            try
+            {
+                var response = new ServiceResponse<List<Product>>()
+                {
+                    Data = products,
+                    Message = "Ok",
+                    Success = true
+                };
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return new ServiceResponse<List<Product>>()
+                {
+                    Data = null,
+                    Message = "Problem with database",
+                    Success = false
+                };
+            }
+        }
+
         public async Task<ServiceResponse<Product>> UpdateProductAsync(Product product)
         {
             try
