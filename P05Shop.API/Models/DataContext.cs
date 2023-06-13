@@ -17,6 +17,7 @@ namespace P05Shop.API.Models
         public DbSet<Supplier> Suppliers{ get; set; }
         public DbSet<ProductSuppliers> ProductSuppliers{ get; set; }
 
+        public DbSet<ProductDetails> ProductDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +46,11 @@ namespace P05Shop.API.Models
                 .WithOne(ps => ps.Product)
                 .HasForeignKey(ps => ps.ProductId);
 
+            modelBuilder.Entity<Product>()
+            .HasOne(p => p.ProductDetails)
+            .WithOne(d => d.Product)
+            .HasForeignKey<ProductDetails>(d => d.ProductId);
+
             // category 
             modelBuilder.Entity<Category>()
                 .HasMany(c => c.Products)
@@ -59,6 +65,11 @@ namespace P05Shop.API.Models
             // productsupplier
             modelBuilder.Entity<ProductSuppliers>()
                 .HasKey(ps => new { ps.ProductId, ps.SupplierId });
+
+
+            // productdetails
+            modelBuilder.Entity<ProductDetails>()
+                .HasKey(pd =>  pd.ProductId);
 
             // data seed 
 

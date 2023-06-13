@@ -63,10 +63,12 @@ namespace P06Shop.Shared.Shop
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public Category Category { get; set; }
-        public int CategoryId { get; set; }
+        public Category? Category { get; set; }
+        public int? CategoryId { get; set; }
 
-        public ProductDetails ProductDetails { get; set;}
+        public int? ProductDetailsId { get; set; }
+
+        public ProductDetails? ProductDetails { get; set;}
 
         public ICollection<ProductSuppliers> ProductSuppliers { get; set; }
     }
